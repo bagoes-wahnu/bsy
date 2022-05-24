@@ -1,0 +1,47 @@
+ALTER TABLE `linkage_kota`
+ADD COLUMN `NOMINAL`  int NULL AFTER `ID_KOTA`;
+ALTER TABLE `linkage_kota`
+MODIFY COLUMN `NOMINAL`  varchar(45) NULL DEFAULT NULL AFTER `ID_KOTA`;
+ALTER TABLE `user`
+ADD COLUMN `ROLE`  enum('1','2') NULL AFTER `PASSWORD`;
+ALTER TABLE `direksi`
+ADD COLUMN `FOTO`  varchar(100) NULL AFTER `DESKRIPSI`;
+
+
+
+==========================31-10-2017=====================================
+ALTER TABLE `bendera_persentase`
+ADD COLUMN `ID_WILAYAH`  int NULL AFTER `ID_BENDERA_PENSENTASE`,
+ADD COLUMN `ID_KAS`  int NULL AFTER `ID_CABANG`;
+ALTER TABLE `bendera_persentase` DROP FOREIGN KEY `fk_bendera_id_cabang`;
+ALTER TABLE `bendera_persentase` ADD CONSTRAINT `fk_bendera_id_wilayaha` FOREIGN KEY (`ID_WILAYAH`) REFERENCES `wilayah` (`ID_WILAYAH`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `bendera_persentase` ADD CONSTRAINT `fk_bendera_id_cabang` FOREIGN KEY (`ID_CABANG`) REFERENCES `cabang` (`ID_CABANG`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `bendera_persentase` ADD CONSTRAINT `fk_bendera_id_kas` FOREIGN KEY (`ID_KAS`) REFERENCES `kas` (`ID_KAS`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `bendera_persentase`
+ADD COLUMN `ID_KOTA`  int NULL AFTER `ID_BENDERA_PENSENTASE`;
+ALTER TABLE `bendera_persentase` ADD CONSTRAINT `fk_bendera_id_kota` FOREIGN KEY (`ID_KOTA`) REFERENCES `syB`.`kota` (`ID_KOTA`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+===========================16-11-2017=====================================
+ALTER TABLE `jabatan`
+ADD COLUMN `ID_JENIS`  int NULL AFTER `STATUS`;
+
+ALTER TABLE `jabatan` ADD CONSTRAINT `fk_jabatan_id_jenis` FOREIGN KEY (`ID_JENIS`) REFERENCES `jenis` (`ID_JENIS`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+===========================02-02-2018=====================================
+ALTER TABLE `syb`.`produk` 
+ADD COLUMN `FILE_SUKU_BUNGA` varchar(255) NULL AFTER `NAMA_PRODUK`;
+
+===========================08-02-2018=====================================
+ALTER TABLE `kas`
+ADD COLUMN `KATEGORI`  enum('Kantor Kas','Kas Keliling','Payment Point') NULL AFTER `FOTO`;
+
+===========================10-01-2019=====================================
+ALTER TABLE `award`
+ADD COLUMN `TGL_AWARD`  datetime NULL AFTER `FILE`;
+ALTER TABLE `award`
+MODIFY COLUMN `TGL_AWARD`  date NULL DEFAULT NULL AFTER `FILE`;
+

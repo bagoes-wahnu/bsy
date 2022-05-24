@@ -1,0 +1,872 @@
+<?php
+$sql = "SELECT * FROM history_import where PROGRESS = 1 AND DELETED = 0 limit 1";
+
+$mysqli = new mysqli("103.93.59.233", "demo", "3n3rg33kDB!@#", "demo_ibsy");
+
+/* check connection */
+if ($mysqli->connect_errno) {
+    printf("Connect failed: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+/* check sql & execute query */
+function exec_query($mysqli, $sql){
+	if ( ($result = $mysqli->query($sql))===false ) {
+		printf("Invalid query : %s\nWhole query: %s\n", $mysqli->error, $sql);
+		exit();
+	}
+	return $result;
+}
+
+$result = exec_query($mysqli, $sql);
+$data = $result->fetch_object();
+
+if(empty($data)){
+	$sql_update = "UPDATE history_import SET PROGRESS = 1 where PROGRESS = 0 AND DELETED = 0 ORDER BY WAKTU ASC limit 1";
+	exec_query($mysqli, $sql_update);
+}
+
+$result = exec_query($mysqli, $sql);
+$data = $result->fetch_object();
+
+
+if(!empty($data)){
+
+	if($data->JENIS == 'realisasi' && $data->KATEGORI == 'tdk'){
+		$sql = "INSERT INTO import_kota (ID_KOTA, `GROUP`, BRANCH, BULAN, TAHUN, KRED_UMUM, KRED_PEG, KRED_MOTOR, KRED_URK, KRED_MOBIL, TAB_SURYA, ATM_KHUSUS, TAB_PENSIUN, TAS, TAB_KU, ATM_SURYA, TAB_UMROH, THT_UMUM, TAB_SIMPEL, DEP_1, DEP_3, DEP_6, DEP_12, KRED_MOTOR_BT)
+			SELECT
+			*
+			FROM
+			(
+			SELECT DISTINCT
+			ID_KOTA,
+			REPLACE (
+			REPLACE (`GROUP`, CHAR(13), ''),
+			CHAR (10),
+			''
+			) AS `GROUP`,
+			BRANCH,
+			BULAN,
+			TAHUN,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '130'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_UMUM,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '131'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_PEG,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '132'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_MOTOR,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '135'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_URK,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '141'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_MOBIL,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '210'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS TAB_SURYA,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '211'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS ATM_KHUSUS,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '212'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS TAB_PENSIUN,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '213'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS TAS,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '214'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS TAB_KU,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '215'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS ATM_SURYA,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '216'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN
+			LIMIT 1
+			), 0) AS TAB_UMROH,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '217'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS THT_UMUM,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '218'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS TAB_SIMPEL,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '221'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS DEP_1,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '222'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS DEP_3,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '223'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS DEP_6,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '224'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS DEP_12,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tdk irtdk1
+			WHERE
+			irtdk1.TYPE = '134'
+			AND irtdk1.`GROUP` = a.`GROUP`
+			AND irtdk1.BRANCH = a.BRANCH
+			AND irtdk1.TAHUN = a.TAHUN
+			AND irtdk1.BULAN = a.BULAN 
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			LIMIT 1
+			), 0) AS KRED_MOTOR_BT
+			FROM
+			import_realisasi_tdk a
+			WHERE
+			`GROUP` IS NOT NULL
+			AND BRANCH IS NOT NULL
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			) AS table_1
+			ON DUPLICATE KEY UPDATE
+			KRED_UMUM=table_1.KRED_UMUM, 
+			KRED_PEG=table_1.KRED_PEG, 
+			KRED_MOTOR=table_1.KRED_MOTOR, 
+			KRED_URK=table_1.KRED_URK, 
+			KRED_MOBIL=table_1.KRED_MOBIL, 
+			TAB_SURYA=table_1.TAB_SURYA, 
+			ATM_KHUSUS=table_1.ATM_KHUSUS, 
+			TAB_PENSIUN=table_1.TAB_PENSIUN, 
+			TAS=table_1.TAS, 
+			TAB_KU=table_1.TAB_KU, 
+			ATM_SURYA=table_1.ATM_SURYA, 
+			TAB_UMROH=table_1.TAB_UMROH, 
+			THT_UMUM=table_1.THT_UMUM, 
+			TAB_SIMPEL=table_1.TAB_SIMPEL, 
+			DEP_1=table_1.DEP_1, 
+			DEP_3=table_1.DEP_3, 
+			DEP_6=table_1.DEP_6, 
+			DEP_12=table_1.DEP_12, 
+			KRED_MOTOR_BT=table_1.KRED_MOTOR_BT";
+		exec_query($mysqli, $sql);
+	} else if($data->JENIS == 'target') {
+		
+        $data_import_target = get_import_target($mysqli, $data->TAHUN, $data->ID_KOTA);
+		$data_array = [];
+		foreach ($data_import_target as $key => $value) {
+			$index = "KT".$value[16]."TH".$value[15]."GR".$value[0]."BR".$value[1]."TY".$value[2];
+			$format_type = format_type($value[2]);
+			$data_array[$index.'BL1'] = format_number($value[3], $format_type);
+			$data_array[$index.'BL2'] = format_number($value[4], $format_type);
+			$data_array[$index.'BL3'] = format_number($value[5], $format_type);
+			$data_array[$index.'BL4'] = format_number($value[6], $format_type);
+			$data_array[$index.'BL5'] = format_number($value[7], $format_type);
+			$data_array[$index.'BL6'] = format_number($value[8], $format_type);
+			$data_array[$index.'BL7'] = format_number($value[9], $format_type);
+			$data_array[$index.'BL8'] = format_number($value[10], $format_type);
+			$data_array[$index.'BL9'] = format_number($value[11], $format_type);
+			$data_array[$index.'BL10'] = format_number($value[12], $format_type);
+			$data_array[$index.'BL11'] = format_number($value[13], $format_type);
+			$data_array[$index.'BL12'] = format_number($value[14], $format_type);
+		}
+
+        $data_import_target = get_import_target_group($mysqli, $data->TAHUN, $data->ID_KOTA);
+		$data_import_kota = [];
+		foreach ($data_import_target as $key => $value) {
+			for ($i=1; $i <= 12; $i++) { 
+				$index = "KT".$value[0]."TH".$value[3]."GR".$value[1]."BR".$value[2];
+				$sql = 'INSERT INTO import_kota (ID_KOTA, `GROUP`, BRANCH, BULAN, TAHUN, TABUNGAN_TARGET, KREDIT_TARGET, DEPOSITO_TARGET, ASET_TARGET, BIAYA_TARGET, PENDAPATAN_TARGET, LABA_TARGET, CAR_TARGET, ROA_TARGET, ROE_TARGET, BOPO_TARGET, CR_TARGET, LDR_TARGET, KAP_TARGET, NPL_GROSS_TARGET, NPL_NET_TARGET, NIM_TARGET)
+						VALUES (
+								"'.$value[0].'", 
+								"'.$value[1].'", 
+								"'.$value[2].'", 
+								"'.$i.'", 
+								"'.$value[3].'", 
+								"'.replaceNol($data_array,$index.'TY200BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY100BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY220BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY600BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY410BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY310BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY510BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY601BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY602BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY603BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY604BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY605BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY606BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY607BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY608BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY609BL'.$i).'", 
+								"'.replaceNol($data_array,$index.'TY610BL'.$i).'"
+						)
+						ON DUPLICATE KEY UPDATE 
+						TABUNGAN_TARGET=VALUES(TABUNGAN_TARGET), 
+						KREDIT_TARGET=VALUES(KREDIT_TARGET), 
+						KREDIT_TARGET=VALUES(KREDIT_TARGET), 
+						DEPOSITO_TARGET=VALUES(DEPOSITO_TARGET), 
+						ASET_TARGET=VALUES(ASET_TARGET), 
+						BIAYA_TARGET=VALUES(BIAYA_TARGET), 
+						PENDAPATAN_TARGET=VALUES(PENDAPATAN_TARGET), 
+						LABA_TARGET=VALUES(LABA_TARGET), 
+						CAR_TARGET=VALUES(CAR_TARGET), 
+						ROA_TARGET=VALUES(ROA_TARGET), 
+						ROE_TARGET=VALUES(ROE_TARGET), 
+						BOPO_TARGET=VALUES(BOPO_TARGET), 
+						CR_TARGET=VALUES(CR_TARGET), 
+						LDR_TARGET=VALUES(LDR_TARGET), 
+						KAP_TARGET=VALUES(KAP_TARGET), 
+						NPL_GROSS_TARGET=VALUES(NPL_GROSS_TARGET), 
+						NPL_NET_TARGET=VALUES(NPL_NET_TARGET),
+						NIM_TARGET=VALUES(NIM_TARGET)';
+
+				exec_query($mysqli, $sql);
+
+			}
+		}
+	} else if($data->JENIS == 'realisasi' && $data->KATEGORI == 'tks') {
+		$sql = "INSERT INTO import_kota (ID_KOTA, `GROUP`, BRANCH, BULAN, TAHUN, TABUNGAN_REALISASI, KREDIT_REALISASI, DEPOSITO_REALISASI, ASET_REALISASI, BIAYA_REALISASI, PENDAPATAN_REALISASI, LABA_REALISASI, CAR_REALISASI, ROA_REALISASI, ROE_REALISASI, BOPO_REALISASI, CR_REALISASI, LDR_REALISASI, KAP_REALISASI, NPL_GROSS_REALISASI, NPL_NET_REALISASI, NIM_REALISASI)
+			SELECT * FROM (
+			SELECT DISTINCT
+			ID_KOTA,
+			REPLACE (
+			REPLACE (`GROUP`, CHAR(13), ''),
+			CHAR (10),
+			''
+			) AS `GROUP`,
+			BRANCH,
+			BULAN,
+			TAHUN,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '200'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS TABUNGAN_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '100'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS KREDIT_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '220'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS DEPOSITO_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '600'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS ASET_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '410'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS BIAYA_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '310'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS PENDAPATAN_REALISASI,
+			COALESCE((
+			SELECT
+			REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '.', ''), ',', '.'),')',''),'(','-')
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '510'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS LABA_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '601'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS CAR_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '602'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS ROA_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '603'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS ROE_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '604'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS BOPO_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '605'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS CR_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '606'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS LDR_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '607'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS KAP_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '608'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS NPL_GROSS_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '609'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS NPL_NET_REALISASI,
+			COALESCE((
+			SELECT
+			(REPLACE(REPLACE(REPLACE(REPLACE(AMOUNT, '%', ''), ',', '.'),')',''),'(','-') / 100)
+			FROM
+			import_realisasi_tks irks1
+			WHERE
+			irks1.TYPE = '610'
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND irks1.`GROUP` = a.`GROUP`
+			AND irks1.BRANCH = a.BRANCH
+			AND irks1.TAHUN = a.TAHUN
+			AND irks1.BULAN = a.BULAN
+			), 0) AS NIM_REALISASI
+			FROM
+			import_realisasi_tks a
+			WHERE
+			`GROUP` IS NOT NULL
+			AND ID_KOTA = '{$data->ID_KOTA}' 
+			AND BULAN = '{$data->BULAN}' 
+			AND TAHUN = '{$data->TAHUN}'
+			AND BRANCH IS NOT NULL
+			) AS table_1
+			ON DUPLICATE KEY UPDATE
+			TABUNGAN_REALISASI=table_1.TABUNGAN_REALISASI,
+			KREDIT_REALISASI=table_1.KREDIT_REALISASI,
+			DEPOSITO_REALISASI=table_1.DEPOSITO_REALISASI,
+			ASET_REALISASI=table_1.ASET_REALISASI,
+			BIAYA_REALISASI=table_1.BIAYA_REALISASI, 
+			PENDAPATAN_REALISASI=table_1.PENDAPATAN_REALISASI, 
+			LABA_REALISASI=table_1.LABA_REALISASI, 
+			CAR_REALISASI=table_1.CAR_REALISASI, 
+			ROA_REALISASI=table_1.ROA_REALISASI, 
+			ROE_REALISASI=table_1.ROE_REALISASI, 
+			BOPO_REALISASI=table_1.BOPO_REALISASI, 
+			CR_REALISASI=table_1.CR_REALISASI, 
+			LDR_REALISASI=table_1.LDR_REALISASI, 
+			KAP_REALISASI=table_1.KAP_REALISASI, 
+			NPL_GROSS_REALISASI=table_1.NPL_GROSS_REALISASI, 
+			NPL_NET_REALISASI=table_1.NPL_NET_REALISASI,
+			NIM_REALISASI=table_1.NIM_REALISASI";
+		exec_query($mysqli, $sql);
+	}
+
+	$sql = "UPDATE history_import SET PROGRESS = 2 where PROGRESS = 1 AND DELETED = 0";
+	exec_query($mysqli, $sql);
+} else {
+	echo "empty data";
+}
+
+
+
+function get_import_target($mysqli, $tahun, $id_kota) 
+{
+	$sql = "SELECT REPLACE (REPLACE (`GROUP`, CHAR(13), ''),CHAR (10),'') AS `GROUP`, BRANCH, TYPE, JAN, FEB, MAR, APR, MEI, JUN, JUL, AGU, SEP, OKT, NOV, DES, TAHUN, ID_KOTA
+			FROM import_target
+			WHERE import_target.ID_KOTA = $id_kota
+			AND import_target.TAHUN = $tahun
+			AND import_target.TYPE != '';";
+	$result = exec_query($mysqli, $sql);
+	return $result->fetch_all();
+}
+
+function get_import_target_group($mysqli, $tahun, $id_kota) 
+{
+	$sql = "SELECT ID_KOTA, REPLACE (REPLACE (`GROUP`, CHAR(13), ''),CHAR (10),'') AS `GROUP`, BRANCH, TAHUN
+			FROM import_target
+			WHERE import_target.ID_KOTA = $id_kota
+			AND import_target.TAHUN = $tahun
+			AND import_target.TYPE != ''
+			GROUP BY ID_KOTA, `GROUP`, BRANCH, TAHUN;";
+	$result = exec_query($mysqli, $sql);
+	return $result->fetch_all();
+}
+
+
+function format_type($type)
+{
+	switch ($type) {
+		case 200:
+			return "des";
+			break;
+		case 100:
+			return "des";
+			break;
+		case 220:
+			return "des";
+			break;
+		case 600:
+			return "des";
+			break;
+		case 410:
+			return "des";
+			break;
+		case 310:
+			return "des";
+			break;
+		case 510:
+			return "des";
+			break;
+		case 601:
+			return "p";
+			break;
+		case 602:
+			return "p";
+			break;
+		case 603:
+			return "p";
+			break;
+		case 604:
+			return "p";
+			break;
+		case 605:
+			return "p";
+			break;
+		case 606:
+			return "p";
+			break;
+		case 607:
+			return "p";
+			break;
+		case 608:
+			return "p";
+			break;
+		case 609:
+			return "p";
+			break;
+		case 610:
+			return "pmin";
+			break;
+		default:
+			return "des";
+	  }
+}
+
+function format_number($val, $ct)
+{
+	switch ($ct) {
+		case 'des':
+			return (string)(str_replace(',', '.',str_replace('-', '0',str_replace('.', '',$val))));
+			break;
+		case 'p':
+			return (string)(floatval(str_replace(',', '.',str_replace('%', '', $val))) / 100);
+			break;
+		case 'pmin':
+			return (string)(floatval(str_replace(',', '.',str_replace('-', '0',str_replace('%', '',$val)))) / 100);
+			break;
+		default:
+			return (string)floatval(str_replace(',', '.',str_replace('-', '0',str_replace('.', '',$val))));
+	  }
+}
+
+
+function replaceNol($data_array,$val) {
+	if(array_key_exists($val,$data_array))
+	return $data_array[$val];
+	else
+	return 0;
+}
+
+$result->close();
+$mysqli->close();

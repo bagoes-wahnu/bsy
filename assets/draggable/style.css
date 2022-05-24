@@ -1,0 +1,70 @@
+/***************************************************
+					Box Grid
+***************************************************/
+.canvas {
+	width: 100%;
+	display: block;
+	margin: 0 auto;
+}
+
+ul.canvas {
+	padding: 0px;
+	overflow: hidden;
+	list-style-type: none;
+	text-align: center;
+}
+
+.block {
+	position: relative;
+	list-style: none;
+	cursor: move;
+	-webkit-user-select: none; 
+	-khtml-user-select: none; 
+	-moz-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
+}
+
+.box {
+	width: 250px;
+	height: 250px;
+	background-color: #212121;
+	float: left;
+	margin: 10px;
+}
+
+.box:hover .lemek {opacity: 0.2;}
+
+.box:hover .middle {opacity: 1;}
+
+.lemek{
+	width: 250px;
+	height: 250px;
+	background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transition: .5s ease;
+}
+
+.nama, .bagian{color: #fff;}
+
+.middle{
+	position: absolute;
+    margin-left: 30px;
+    margin-top: 95px;
+    opacity: 0;
+}
+
+.nama{
+	font-family: 'Poppins', sans-serif;
+	letter-spacing: -0.5px;
+	text-align: center;
+}
+
+.bagian{
+	font-family: 'Montserrat', sans-serif;
+	letter-spacing: -0.5px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
