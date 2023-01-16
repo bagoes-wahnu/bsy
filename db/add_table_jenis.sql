@@ -1,6 +1,0 @@
-CREATE TABLE `jenis` (
-`ID_JENIS`  int NOT NULL AUTO_INCREMENT ,
-`JENIS`  varchar(50) NULL ,
-PRIMARY KEY (`ID_JENIS`)
-)
-;
